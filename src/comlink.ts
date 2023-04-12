@@ -454,6 +454,9 @@ function createProxy<T>(
   const proxy = new Proxy(target, {
     get(_target, prop) {
       throwIfProxyReleased(isProxyReleased);
+      if (typeof target == "function" && prop in Function.prototype) {
+        return Reflect.get(target, prop);
+      }
       if (prop === releaseProxy) {
         return () => {
           unregisterProxy(proxy);
